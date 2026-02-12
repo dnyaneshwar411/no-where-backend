@@ -4,7 +4,7 @@ import { createUser, updateUserWithUserId } from "./user.service";
 import { ApiError } from "../utils/ApiError";
 import { IUser } from "../model/user.model";
 
-export const channelExists = async function({
+export const channelExists = async function ({
   channelId,
   channelUserName,
 }: {
@@ -33,7 +33,7 @@ type CreateChannelType = {
   userPassword: string;
 };
 
-export const createChannelService = async function(body: CreateChannelType) {
+export const createChannelService = async function (body: CreateChannelType) {
   if (await channelExists({ channelUserName: body.channelName })) {
     throw new ApiError(409, "Channel with this name already exists");
   }
@@ -56,7 +56,7 @@ export const createChannelService = async function(body: CreateChannelType) {
   return channel;
 };
 
-export const getChannelByName = async function(
+export const getChannelByName = async function (
   channelName: string,
   fields: string = "",
 ) {

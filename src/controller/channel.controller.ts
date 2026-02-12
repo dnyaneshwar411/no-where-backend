@@ -18,7 +18,7 @@ import config from "../config/config";
 
 const channelController: Record<string, Function> = {};
 
-export const createChannel = catchAsync(async function(
+export const createChannel = catchAsync(async function (
   req: Request,
   res: Response,
 ) {
@@ -30,7 +30,7 @@ export const createChannel = catchAsync(async function(
   });
 });
 
-export const createChannelUser = catchAsync(async function(
+export const createChannelUser = catchAsync(async function (
   req: Request,
   res: Response,
 ) {
@@ -53,7 +53,7 @@ export const createChannelUser = catchAsync(async function(
   });
 });
 
-export const loginChannelUser = catchAsync(async function(
+export const loginChannelUser = catchAsync(async function (
   req: Request,
   res: Response,
 ) {

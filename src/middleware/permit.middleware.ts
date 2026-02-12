@@ -1,13 +1,6 @@
-import express from "express";
+import { verifyUser } from "../services/token.service";
 
-export const permit = function() {
-  return async function(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) {
-    try {
-      const token = req.headers.authorization?.split(" ")?.at(1);
-    } catch (error) { }
-  };
+export const permit = async function(token: string, tabHeader: string) {
+  const { success, payload: user } = await verifyUser(token, tabHeader);
+  return { success, user };
 };

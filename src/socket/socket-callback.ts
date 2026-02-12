@@ -1,21 +1,48 @@
 import WebSocket from "ws";
-import { eventMap } from "./event-map";
 import { Hashmap } from "./types";
 import { randomUUID } from "node:crypto";
+import { joinChannel, messageClient } from "./events-handlers";
+import { permit } from "../middleware/permit.middleware";
 
-export const socketCallback = function (ws: WebSocket, hashmap: Hashmap) {
+export const socketCallback = function (
+  ws: WebSocket,
+  hashmap: Map<string, string[]>,
+  sessionsHashMap: Hashmap,
+) {
   const sessionId = randomUUID();
   (ws as any).sessionId = sessionId;
 
-  hashmap.set(sessionId, ws);
+  sessionsHashMap.set(sessionId, ws);
 
   ws.on("close", () => {
-    hashmap.delete(sessionId);
+    sessionsHashMap.delete(sessionId);
   });
 
   ws.on("error", console.error);
 
-  eventMap.forEach(({ event, handler }) => {
-    ws.on(event, (data) => handler(ws, hashmap, data));
+  ws.on("message", async function (data) {
+    const payload = Buffer.isBuffer(data) ? JSON.parse(data.toString()) : {};
+
+    const { event, token, tabHeader, ...parsedPayload } = payload;
+
+    const { success, user } = await permit(token, tabHeader);
+    if (!success) {
+      ws.send(
+        JSON.stringify({
+          event: "error",
+          message: "invalid credentials"
+        }),
+      );
+      return;
+    }
+    parsedPayload.user = user;
+    switch (event) {
+      case "join-channel":
+        joinChannel(ws, hashmap, sessionsHashMap, parsedPayload);
+        return;
+      case "message-from-client":
+        messageClient(ws, hashmap, sessionsHashMap, parsedPayload)
+        return;
+    }
   });
 };

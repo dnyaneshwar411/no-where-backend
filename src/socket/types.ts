@@ -8,6 +8,7 @@ export type EventMapType = {
   handler: (
     ws: WebSocket,
     hashmap: Hashmap,
+    sessionsHashMap: Hashmap,
     data: any
   ) => Promise<void>
 }

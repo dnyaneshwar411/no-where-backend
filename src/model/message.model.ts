@@ -10,9 +10,13 @@ const messageSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ["string", "img"],
+    enum: ["text", "img"],
   },
-});
+  channel: {
+    type: Schema.Types.ObjectId,
+    ref: "Channel"
+  }
+}, { timestamps: true });
 
 type IMessage = InferSchemaType<typeof messageSchema>;
 

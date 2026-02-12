@@ -4,7 +4,7 @@ import assert from "node:assert";
 import User, { IUser } from "../model/user.model";
 import { getChannelByName } from "./channel.service";
 
-export const userExists = async function({
+export const userExists = async function ({
   userId,
   userName,
   channelName,
@@ -50,7 +50,7 @@ export const userExists = async function({
   return isValidObjectId(user?._id);
 };
 
-export const createUser = async function(
+export const createUser = async function (
   userName: string,
   password: string,
   channelName?: Types.ObjectId | string,
@@ -72,7 +72,7 @@ export const createUser = async function(
   return User.create(payload);
 };
 
-export const updateUserWithUserId = async function(
+export const updateUserWithUserId = async function (
   userId: Schema.Types.ObjectId | string,
   payload: Pick<IUser, "user" | "channel">,
 ) {
@@ -81,9 +81,18 @@ export const updateUserWithUserId = async function(
   });
 };
 
-export const getUserByFilters = async function(
+export const getUserByFilters = async function (
   filters: object,
   fields: string = "",
 ) {
   return await User.findOne(filters).select(fields);
 };
+
+export const fetchChannelUsers = async function (
+  channelId: string | Schema.Types.ObjectId
+) {
+  return await User
+    .find({ channel: channelId })
+    .select("-password -channel")
+    .lean()
+}
