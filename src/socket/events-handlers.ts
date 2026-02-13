@@ -4,35 +4,6 @@ import Message from "../model/message.model";
 import { createMessage } from "../services/message.service";
 import { fetchChannelUsers } from "../services/user.service";
 
-export const message = async function (
-  ws: WebSocket,
-  hashmap: Hashmap,
-  data: any,
-): Promise<void> {
-  try {
-    for (const [id, socket] of hashmap.entries()) {
-      if (
-        id === (ws as any).sessionId &&
-        socket.readyState === WebSocket.OPEN
-      ) {
-        socket.send(
-          JSON.stringify({
-            event: "new-message",
-            message: "hello from someone else",
-          }),
-        );
-      }
-    }
-  } catch (error) {
-    ws.send(JSON.stringify({
-      event: "error",
-      message: error instanceof Error
-        ? error.message || "Something went wrong!"
-        : "Something went wrong!"
-    }))
-  }
-};
-
 export const joinChannel = async function (
   ws: WebSocket,
   hashmap: Map<string, string[]>,
