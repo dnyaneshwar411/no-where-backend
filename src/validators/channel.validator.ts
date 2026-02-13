@@ -27,6 +27,10 @@ channelValidator.createChannelUser = {
       "string.length": "User password must be exactly 6 characters",
     }),
     channelName: Joi.string().trim().required(),
+    channelPassword: Joi.string().alphanum().length(6).required().messages({
+      "string.alphanum": "Channel password must be alphanumeric",
+      "string.length": "Channel password must be exactly 6 characters",
+    }),
   }),
 };
 

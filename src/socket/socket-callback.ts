@@ -18,8 +18,6 @@ export const socketCallback = function (
     sessionsHashMap.delete(sessionId);
   });
 
-  ws.on("error", console.error);
-
   ws.on("message", async function (data) {
     const payload = Buffer.isBuffer(data) ? JSON.parse(data.toString()) : {};
 

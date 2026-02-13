@@ -53,7 +53,10 @@ export const createChannelService = async function (body: CreateChannelType) {
     IUser,
     "user" | "channel"
   >);
-  return channel;
+  return {
+    channel,
+    user
+  };
 };
 
 export const getChannelByName = async function (

@@ -22,11 +22,27 @@ export const createChannel = catchAsync(async function (
   req: Request,
   res: Response,
 ) {
-  const channel = await createChannelService(req.body);
+  const {
+    channel,
+    user
+  } = await createChannelService(req.body);
+
+  const tabHeader = generateRandomHex();
+
+  const token = await signToken({
+    userId: user._id,
+    channelId: channel._id,
+    tabHeader,
+  });
+
   res.status(200).json({
     success: true,
     message: "Successfull",
     data: channel,
+    tokens: {
+      token,
+      tabHeader
+    }
   });
 });
 
@@ -40,16 +56,41 @@ export const createChannelUser = catchAsync(async function (
   ) {
     throw new ApiError(400, "User with this user name already exists!");
   }
+  const channel = await getChannelByName(body.channelName, "+password")
+
+  if (!channel) throw new ApiError(
+    404, "No channel with this channel name exists!"
+  )
+
+  if (
+    !(await compareHash(body.channelPassword as string, channel.password as string))
+  ) {
+    throw new ApiError(400, "Incorrect password provided!");
+  }
+
   const user = await createUser(
     body.userName,
     body.userPassword,
     body.channelName,
   );
   user.password;
+
+  const tabHeader = generateRandomHex();
+
+  const token = await signToken({
+    userId: user._id,
+    channelId: channel._id,
+    tabHeader,
+  });
+
   res.status(200).json({
     success: true,
     message: "Successfull",
     data: user,
+    tokens: {
+      token,
+      tabHeader
+    }
   });
 });
 
@@ -86,24 +127,13 @@ export const loginChannelUser = catchAsync(async function (
     tabHeader,
   });
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    maxAge: config.cookieExpirationDuration,
-    path: "/",
-  });
-
-  res.cookie("tabHeader", tabHeader, {
-    httpOnly: true,
-    secure: true,
-    maxAge: config.cookieExpirationDuration,
-    path: "/",
-  });
-
   res.status(200).json({
     success: true,
     message: "Successfull",
-    // data: user,
+    tokens: {
+      token,
+      tabHeader
+    }
   });
 });
 

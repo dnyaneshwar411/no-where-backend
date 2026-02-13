@@ -31,14 +31,3 @@ export const verifyUser = async function (
     payload,
   };
 };
-
-(async function () {
-  console.log(
-    await signToken({
-      tabHeader:
-        "6449ee8b11c6caf29004f6a708a65d965fa291cb1d2490d18b035389781c2840",
-      userId: "6988a0c4e52891b5af391f25",
-      channelId: "698847866b73a367cf0a02c6",
-    }),
-  );
-});
