@@ -21,3 +21,10 @@ export const createMessage = async function ({
     channel
   })
 }
+
+export const retrieveMessages = async function (channelId: string | Types.ObjectId) {
+  return await Message
+    .find({ channel: channelId })
+    .populate("createdBy", "user")
+    .lean()
+}

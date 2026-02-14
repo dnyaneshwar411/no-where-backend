@@ -1,8 +1,7 @@
 import WebSocket from "ws";
 import { Hashmap } from "./types";
-import Message from "../model/message.model";
-import { createMessage } from "../services/message.service";
-import { fetchChannelUsers } from "../services/user.service";
+import { createMessage, retrieveMessages } from "../services/message.service";
+import { fetchChannelUsers, getUserByFilters } from "../services/user.service";
 
 export const joinChannel = async function (
   ws: WebSocket,
@@ -11,18 +10,22 @@ export const joinChannel = async function (
   data: any,
 ) {
   try {
-    const { channelId } = data.user;
+    const { channelId, userId } = data.user;
 
-    const messages = await Message
-      .find({ channel: channelId })
-      .lean()
+    const messages = await retrieveMessages(channelId)
 
     const users = await fetchChannelUsers(channelId)
 
+    const loggedInUser = users.find(user => String(user._id) === userId)
+
     ws.send(JSON.stringify({
       event: "channel-joined",
-      messages,
-      users
+      messages: messages.map(mes => ({
+        ...mes,
+        myMessageFlag: String(userId) === String(mes.createdBy?._id)
+      })),
+      users,
+      me: loggedInUser
     }))
 
   } catch (error) {
@@ -48,6 +51,8 @@ export const messageClient = async function (
       user: { userId, channelId }
     } = data;
 
+    const user = await getUserByFilters({ _id: userId, channel: channelId }, "user")
+
     const sessions: Set<string> = new Set([
       ...(hashmap.get(channelId) || []),
       (ws as any)?.sessionId
@@ -68,7 +73,13 @@ export const messageClient = async function (
       if (socket) {
         socket.send(JSON.stringify({
           event: "message-from-server",
-          message
+          message: {
+            ...message.toObject(),
+            createdBy: {
+              _id: user?._id,
+              user: user?.user
+            }
+          }
         }))
       }
     });

@@ -50,6 +50,9 @@ importers:
       http-status:
         specifier: ^2.1.0
         version: 2.1.0
+      index.js:
+        specifier: ^0.0.3
+        version: 0.0.3
       joi:
         specifier: ^18.0.2
         version: 18.0.2
@@ -442,6 +445,9 @@ packages:
   iconv-lite@0.7.2:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
+
+  index.js@0.0.3:
+    resolution: {integrity: sha512-62dN71h/y6X96muC2hxI95oPRpOwf+0mwS7S0TsMuEy857w41qjz8XJjob7eyuesQ71nbylasZx8sIkPAc5pXA==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -1264,6 +1270,8 @@ snapshots:
   iconv-lite@0.7.2:
     dependencies:
       safer-buffer: 2.1.2
+
+  index.js@0.0.3: {}
 
   inflight@1.0.6:
     dependencies:
